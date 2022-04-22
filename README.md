@@ -3,6 +3,12 @@
 ## Feichtinger
 Works right now only for Feichtiner..
 
+_Special Conversions_
+
+* loose articels with units in 'kg' are changed to 500g and prices gets adapted
+* all `zukauf` articles are skipped
+* also Bestellnummer over _100000_ is skipped, mostly meat and stuff
+
 # Usage
 ## Import from Feichtinger to Foodsoft
 * Download Feichtinger xls and give as param -i 
@@ -14,7 +20,12 @@ Works right now only for Feichtiner..
 * output is a new xls copied from feichtinger xls with the values filled out, filename starts with KWxx_
 * Original xls will not be overwritten or modified
 
-
+## csv formats
+foodsoft download:
+````
+Bestellte Gebinde;Bestellnummer;Name;Einheit;GebGr;Nettopreis;Total price
+`````
+feichtinger: 
 
 # Params
 ````
