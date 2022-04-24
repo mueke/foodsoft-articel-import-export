@@ -17,6 +17,7 @@ parser.add_argument('-i', '--in_file', help="Input file vom Lieferanten")
 parser.add_argument('-o', '--out_file' ,nargs='?', type=argparse.FileType('w'),default=sys.stdout, help="Das csv zum Upload in die foodsoft")
 parser.add_argument('-b', '--bestellung', nargs='?', type=argparse.FileType('r',encoding='iso-8859-1'), help="Das csv mit den Bestellungen")
 parser.add_argument('-w', '--week', default=current_week_nr, type=int, help="Defaults to the current week number")
+parser.add_argument('-d', '--debug', default=False, type=bool, help="Debug on/off")
 
 args = parser.parse_args()
 print("in_file >",type(args.in_file), file=sys.stderr)
@@ -33,35 +34,48 @@ def artikel2Bestellung():
     #shutil.copyfile(args.in_file,bestellt_filename)
     mywb = openpyxl.load_workbook(args.in_file)
     sheet = mywb.active
-    print( sheet )
-    
+    if args.debug: print( sheet )
+    summe = 0
+    dict_summe = {}
     csv_in = csv.reader(args.bestellung,delimiter=';')
+
     for line in csv_in:
-        print(line)
-        name = line[2]
-        fs_einheit = line[3]
+        if args.debug: print(line)
         if not re.match('\d+',line[1]):
             continue
+        name = line[2]
+        fs_einheit = line[3]
+        fs_preis = float(re.match('([\d,]+)+',line[5])[1].replace(',','.'))
+        fs_preisgesammt = float(re.match('([\d,]+)+',line[6])[1].replace(',','.'))
+        
         nr = int(line[1])
-        menge = int(line[0])
+        fs_menge = int(line[0])
+        
+        summe = summe + ( fs_menge * fs_preis )
+        
+        print(nr,name,fs_preis,fs_menge)
         for x in range (11,100):
             if sheet.cell(row=x,column=1).value == nr:
-                print("Found Record")
+                print("<----- Found Record Nr:{} in Row: {} ------>".format(nr,x))
                 einheit = sheet.cell(row=x,column=3).value
+                preis = sheet.cell(row=x,column=5).value
+                print("Preis: {}, Einheit: {}".format(preis,einheit))
                 if einheit == 'kg' and fs_einheit == '500g':
-                    menge = menge / 2
-
+                    fs_menge = fs_menge / 2
+                    
                 curr_val = sheet.cell(row=x,column=8).value
-                print( "curr_val:",type(curr_val),"Val:",curr_val)
+                if args.debug: print( "curr_val:",type(curr_val),"Val:",curr_val)
                 if type(curr_val) in [float,int] and curr_val > 0:
-                    menge = menge + curr_val 
-                    print( "Wert für {} wird erhöht von {} auf {}".format(name,curr_val,menge))
+                    fs_menge = fs_menge + curr_val
+                    print( "Wert für {} wird erhöht von {} auf {}".format(name,curr_val,fs_menge))
+                              
+                sheet.cell(row=x,column=8).value = fs_menge
+                if args.debug: print("Schreibe Menge {}".format(fs_menge))
+                
+                continue;
 
-                sheet.cell(row=x,column=8).value = menge
-                print("Schreibe Menge {}".format(menge))
-
-        
-        mywb.save(bestellt_filename)
+    mywb.save(bestellt_filename)
+    print( "Saved {}, Summe: {}".format(bestellt_filename,summe))
 
 
 def bestell2artikel():
