@@ -101,6 +101,7 @@ def bestell2artikel():
         if not type(nr) == int or nr > 99999: continue
 
         name = sheet.cell(row=x,column=2).value
+        name = re.sub('"','',name)
         einheit = sheet.cell(row=x,column=3).value
         zusatz = sheet.cell(row=x,column=4).value
         preis = sheet.cell(row=x,column=5).value
