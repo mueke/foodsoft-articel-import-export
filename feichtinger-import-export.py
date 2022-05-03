@@ -1,5 +1,5 @@
 from ast import arg
-from io import TextIOWrapper
+from io import StringIO, TextIOWrapper
 import numbers
 import openpyxl
 import re
@@ -18,6 +18,7 @@ parser.add_argument('-o', '--out_file' ,nargs='?', type=argparse.FileType('w'),d
 parser.add_argument('-b', '--bestellung', nargs='?', type=argparse.FileType('r',encoding='iso-8859-1'), help="Das csv mit den Bestellungen")
 parser.add_argument('-w', '--week', default=current_week_nr, type=int, help="Defaults to the current week number")
 parser.add_argument('-d', '--debug', default=False, type=bool, help="Debug on/off")
+parser.add_argument('-f', '--filter', type=str, help="Regex Filter for artikel name, which should not be on the csv to foodsoft list")
 
 args = parser.parse_args()
 print("in_file >",type(args.in_file), file=sys.stderr)
@@ -109,6 +110,10 @@ def bestell2artikel():
         comment = sheet.cell(row=x,column=7).value or ''
         # 
         comment = re.sub('"','',comment)
+
+        if args.filter and re.match(args.filter,name):
+            print("Filtered: ",name," with filter ",args.filter)
+            continue
 
         print(x,nr,name,einheit,zusatz,preis,mwst,comment,sep=";", file=sys.stderr)
         if re.match( '.*zukauf.*',comment,flags=re.IGNORECASE):
