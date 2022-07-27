@@ -112,7 +112,11 @@ def bestell2artikel():
         comment = re.sub('"','',comment)
 
         if args.filter and re.match(args.filter,name):
-            print("Filtered: ",name," with filter ",args.filter)
+            print("Filtered Name: ",name," with filter ",args.filter)
+            continue
+
+        if args.filter and re.match(args.filter,comment):
+            print("Filtered Comment: ",comment," with filter ",args.filter)
             continue
 
         print(x,nr,name,einheit,zusatz,preis,mwst,comment,sep=";", file=sys.stderr)
