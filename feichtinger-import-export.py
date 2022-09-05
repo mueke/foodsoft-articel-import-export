@@ -162,9 +162,9 @@ def bestell2artikel():
     # name soll gleich bleiben, nur die einheit von 1kg auf 500g
     #        is_name == ff fs_name_500g:
     #            fs_name_500g = fs_name + " 500g"
-            print( '""',fs_bestellnummer,fs_name_500g,fs_notiz,fs_produzent,fs_herkunft,'500g',fs_nettopreis/2,fs_mwst,fs_pfand,fs_gebinde,'""','""',fs_kategorie, sep=';',file=csv)
+            print( '""',fs_bestellnummer,fs_name_500g + '(500g)',fs_notiz,fs_produzent,fs_herkunft,'500g',fs_nettopreis/2,fs_mwst,fs_pfand,fs_gebinde,'""','""',fs_kategorie, sep=';',file=csv)
         else:
-            print( '""',fs_bestellnummer,fs_name,fs_notiz,fs_produzent,fs_herkunft,fs_einheit,fs_nettopreis,fs_mwst,fs_pfand,fs_gebinde,'""','""',fs_kategorie, sep=';',file=csv)
+            print( '""',fs_bestellnummer,fs_name+ '('+fs_einheit+')',fs_notiz,fs_produzent,fs_herkunft,fs_einheit,fs_nettopreis,fs_mwst,fs_pfand,fs_gebinde,'""','""',fs_kategorie, sep=';',file=csv)
 
 
     print("fertig", file=sys.stderr)
