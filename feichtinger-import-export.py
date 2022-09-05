@@ -99,7 +99,10 @@ def bestell2artikel():
         nr = sheet.cell(row=x,column=1).value or ''
         print("NR:",nr, 'Type:',type(nr), file=sys.stderr)
         # ignoriere alle ohne artikel nr und alle artikel nummer ab 100000 ( gemüse ist hoffentlich immer unter 100000)
-        if not type(nr) == int or nr > 99999: continue
+
+        if not type(nr) == int : 
+            print("Nr is not a number",nr)
+            continue
 
         name = sheet.cell(row=x,column=2).value
         name = re.sub('"','',name)
@@ -110,6 +113,10 @@ def bestell2artikel():
         comment = sheet.cell(row=x,column=7).value or ''
         # 
         comment = re.sub('"','',comment)
+
+        if not type(nr) == int or nr > 99999: 
+            print("Filtered: Nr > 99999 :", name,": ", zusatz, ": ", comment)
+            continue
 
         if args.filter and re.match(args.filter,name):
             print("Filtered Name: ",name," with filter ",args.filter)
